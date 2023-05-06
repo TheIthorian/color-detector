@@ -1,3 +1,5 @@
+import { rgbToHex } from './colors.js';
+
 export class App {
     logger;
     appContainerElement;
@@ -71,18 +73,12 @@ export class App {
             await this.getColorCode(videoStream);
         } catch (error) {
             videoStream?.getTracks().forEach(track => track.stop());
-            console.error(error);
             // throw new Error('Unable to access camera');
             throw error;
         }
     }
 
     async getColorCode(videoStream) {
-        const videoTracks = videoStream.getVideoTracks();
-        console.log(videoTracks);
-
-        // const ctx = canvas.getContext('2d');
-
         const ctx = this.canvasElement.getContext('2d');
 
         const loop = () => {
@@ -90,8 +86,6 @@ export class App {
 
             const [x, y, width, height] = [5, 5, 11, 11];
             const imageData = ctx.getImageData(x, y, width, height);
-
-            console.log(imageData);
 
             const pixels = imageData.data;
             // const centerPixelPosition = 11 * 4 * 6;
@@ -104,13 +98,4 @@ export class App {
 
         setInterval(loop, 40);
     }
-}
-
-function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? '0' + hex : hex;
-}
-
-function rgbToHex(r, g, b) {
-    return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
