@@ -1,0 +1,15 @@
+{
+    "name": "color-detector",
+    "version": "1.0.0",
+    "description": "Use your camera to find the color of things",
+    "main": "index.js",
+    "scripts": {
+        "test": "test:unit"
+    },
+    "keywords": [
+        "camera",
+        "color"
+    ],
+    "author": "TheIthorian",
+    "license": "ISC"
+}
