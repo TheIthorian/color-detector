@@ -10,7 +10,7 @@ async function main() {
 
     logger.log({ hello: 'world' });
 
-    new App()
+    new App(logger)
         .mount(appMountElement)
         .run()
         .catch(err => console.error(err));
