@@ -2,8 +2,9 @@
     "name": "color-detector",
     "version": "1.0.0",
     "description": "Use your camera to find the color of things",
-    "main": "index.js",
+    "type": "module",
     "scripts": {
+        "dev": "nodemon \"http-server .\"",
         "test": "test:unit"
     },
     "keywords": [
@@ -11,5 +12,8 @@
         "color"
     ],
     "author": "TheIthorian",
-    "license": "ISC"
+    "license": "ISC",
+    "devDependencies": {
+        "prettier": "^2.8.8"
+    }
 }
