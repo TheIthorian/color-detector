@@ -5,10 +5,10 @@ export class Logger {
         this.displayElement = displayElement;
     }
 
-    log(message) {
+    log(message, skipConsole = false) {
         if (!this.displayElement) return;
 
-        console.log(message);
+        if (!skipConsole) console.log(message);
 
         if (typeof message === 'string') {
             this.displayElement.textContent = message;
