@@ -25,19 +25,9 @@ export class App {
     async run() {
         let videoStream;
         try {
-            const availableDevices = await navigator.mediaDevices.enumerateDevices();
-            console.log(availableDevices);
-
-            const videoCamera = availableDevices.find(device => device.kind === 'videoinput');
-            if (!videoCamera) {
-                throw Error('Could not find camera');
-            }
-
             videoStream = await navigator.mediaDevices.getUserMedia({
                 audio: false,
-                video: {
-                    deviceId: videoCamera.deviceId,
-                },
+                video: { facingMode: 'environment' },
             });
 
             this.video.srcObject = videoStream;
