@@ -1,12 +1,34 @@
 export class App {
+    logger;
     appContainerElement;
+    canvasElement;
+    targetColor;
 
-    constructor() {}
+    constructor(logger) {
+        this.logger = logger;
+
+        const deviceAvailable =
+            'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
+
+        if (!deviceAvailable) {
+            throw Error('Browser does not support media devices');
+        }
+    }
 
     mount(appContainerElement) {
         this.appContainerElement = appContainerElement;
+        this.createCanvasElement();
         this.createVideoElement();
         return this;
+    }
+
+    createCanvasElement() {
+        const canvas = document.createElement('canvas');
+        canvas.setAttribute('height', 11);
+        canvas.setAttribute('width', 11);
+        this.appContainerElement.appendChild(canvas);
+
+        this.canvasElement = canvas;
     }
 
     createVideoElement() {
@@ -44,14 +66,29 @@ export class App {
         const videoTracks = videoStream.getVideoTracks();
         console.log(videoTracks);
 
-        const canvas = document.querySelector('canvas');
-        const ctx = canvas.getContext('2d');
+        // const canvas = document.querySelector('canvas');
+        // const ctx = canvas.getContext('2d');
+
+        const ctx = this.canvasElement.getContext('2d');
 
         const loop = () => {
-            ctx.drawImage(this.video, 0, 0, 16, 12);
-            requestAnimationFrame(loop);
+            ctx.drawImage(this.video, 0, 0, 11, 11);
+
+            const [x, y, width, height] = [5, 5, 11, 11];
+            const imageData = ctx.getImageData(x, y, width, height);
+
+            console.log(imageData);
+
+            const pixels = imageData.data;
+            const centerPixel = pixels[Math.floor(pixels.length / 2)];
+            this.logger.log({ centerPixelValue: centerPixel });
+            this.targetColor = '#FFFFFF';
+
+            // requestAnimationFrame(loop);
         };
 
-        requestAnimationFrame(loop);
+        // requestAnimationFrame(loop);
+
+        setInterval(loop, 100);
     }
 }
