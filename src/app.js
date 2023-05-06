@@ -2,7 +2,11 @@ export class App {
     logger;
     appContainerElement;
     canvasElement;
-    targetColor;
+    outputElement;
+
+    get targetColor() {
+        return this.outputElement.style.backgroundColor;
+    }
 
     constructor(logger) {
         this.logger = logger;
@@ -19,6 +23,7 @@ export class App {
         this.appContainerElement = appContainerElement;
         this.createCanvasElement();
         this.createVideoElement();
+        this.createOutputElement();
         return this;
     }
 
@@ -41,6 +46,16 @@ export class App {
         this.appContainerElement.appendChild(video);
 
         this.video = video;
+    }
+
+    createOutputElement() {
+        const outputElement = document.createElement('div');
+        outputElement.style.width = '100%';
+        outputElement.style.height = '100px';
+        outputElement.style.backgroundColor = '#FFFFFF';
+        this.appContainerElement.appendChild(outputElement);
+
+        this.outputElement = outputElement;
     }
 
     async run() {
@@ -66,7 +81,6 @@ export class App {
         const videoTracks = videoStream.getVideoTracks();
         console.log(videoTracks);
 
-        // const canvas = document.querySelector('canvas');
         // const ctx = canvas.getContext('2d');
 
         const ctx = this.canvasElement.getContext('2d');
@@ -80,15 +94,23 @@ export class App {
             console.log(imageData);
 
             const pixels = imageData.data;
-            const centerPixel = pixels[Math.floor(pixels.length / 2)];
-            this.logger.log({ centerPixelValue: centerPixel });
-            this.targetColor = '#FFFFFF';
+            // const centerPixelPosition = 11 * 4 * 6;
+            const firstPixelPosition = 0;
+            const [r, g, b, a] = pixels.slice(firstPixelPosition, firstPixelPosition + 5);
+            this.logger.log({ r, g, b, a, hex: rgbToHex(r, g, b) });
 
-            // requestAnimationFrame(loop);
+            this.outputElement.style.backgroundColor = rgbToHex(r, g, b);
         };
 
-        // requestAnimationFrame(loop);
-
-        setInterval(loop, 100);
+        setInterval(loop, 40);
     }
+}
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? '0' + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
