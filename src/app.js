@@ -33,6 +33,7 @@ export class App {
         const canvas = document.createElement('canvas');
         canvas.setAttribute('height', 11);
         canvas.setAttribute('width', 11);
+        canvas.style.display = 'none';
         this.appContainerElement.appendChild(canvas);
 
         this.canvasElement = canvas;
@@ -43,8 +44,8 @@ export class App {
         video.setAttribute('playsinline', '');
         video.setAttribute('autoplay', '');
         video.setAttribute('muted', '');
-        video.style.width = '200px';
-        video.style.height = '200px';
+        video.style.width = '100%';
+        video.style.height = '300px';
         this.appContainerElement.appendChild(video);
 
         this.video = video;
@@ -53,7 +54,7 @@ export class App {
     createOutputElement() {
         const outputElement = document.createElement('div');
         outputElement.style.width = '100%';
-        outputElement.style.height = '100px';
+        outputElement.style.height = '300px';
         outputElement.style.backgroundColor = '#FFFFFF';
         this.appContainerElement.appendChild(outputElement);
 
@@ -91,7 +92,10 @@ export class App {
             // const centerPixelPosition = 11 * 4 * 6;
             const firstPixelPosition = 0;
             const [r, g, b, a] = pixels.slice(firstPixelPosition, firstPixelPosition + 5);
-            this.logger.log({ r, g, b, a, hex: rgbToHex(r, g, b) });
+
+            const hexColorString = rgbToHex(r, g, b);
+            const logMessage = `rgb(${[r, g, b].join(', ')}), hex: ${hexColorString}`;
+            this.logger.log(logMessage, true);
 
             this.outputElement.style.backgroundColor = rgbToHex(r, g, b);
         };
