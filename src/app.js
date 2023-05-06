@@ -16,10 +16,9 @@ export class App {
         video.setAttribute('muted', '');
         video.style.width = '200px';
         video.style.height = '200px';
+        this.appContainerElement.appendChild(video);
 
         this.video = video;
-        console.log(video);
-        this.appContainerElement.appendChild(this.video);
     }
 
     async run() {
