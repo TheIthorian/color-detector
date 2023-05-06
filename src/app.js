@@ -40,5 +40,18 @@ export class App {
         }
     }
 
-    async getColorCode(videoStream) {}
+    async getColorCode(videoStream) {
+        const videoTracks = videoStream.getVideoTracks();
+        console.log(videoTracks);
+
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const loop = () => {
+            ctx.drawImage(this.video, 0, 0, 16, 12);
+            requestAnimationFrame(loop);
+        };
+
+        requestAnimationFrame(loop);
+    }
 }
