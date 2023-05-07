@@ -1,4 +1,5 @@
 export class VideoAdapter {
+    name = 'VideoAdapter';
     output;
     inputStream;
     options;
@@ -50,7 +51,7 @@ export class VideoAdapter {
     connectOutput(videoOutput) {
         this.output = videoOutput;
         this.output.connectInput(this);
-        return this;
+        return videoOutput;
     }
 
     disconnectOutput() {
@@ -67,53 +68,27 @@ export class VideoAdapter {
         const imageData = ctx.getImageData(0, 0, xResolution, yResolution);
         return imageData;
     }
-}
 
-export class CanvasVideoOutput {
-    canvasElement;
-    options;
-    imageSource;
-
-    constructor(element, options = {}) {
-        this.canvasElement = element;
-        this.options = {
-            frameRate: options.frameRate ?? 24,
-        };
+    getVideoGraph() {
+        const graph = [];
+        let curr = this;
+        while (curr) {
+            graph.push(curr);
+            curr = curr.output;
+        }
+        return graph;
     }
-
-    connectInput(imageSource) {
-        this.imageSource = imageSource;
-        return this;
-    }
-
-    disconnectInput() {
-        this.imageSource = undefined;
-        return this;
-    }
-
-    display() {
-        console.log(this.canvasElement);
-        const ctx = this.canvasElement.getContext('2d');
-
-        const loop = () => {
-            const imageData = this.imageSource.read();
-            console.log(imageData);
-            ctx.putImageData(imageData, 0, 0);
-        };
-
-        setInterval(loop, 1000 / this.options.frameRate);
-    }
-}
-
-class VideoFilter {
-    constructor() {}
 }
 
 class VideoNode {
+    name = 'VideoNode';
     input;
     output;
 
+    constructor() {}
+
     connectInput(input) {
+        console.log(`${this.name} connected to ${input.name}`);
         this.input = input;
         return this;
     }
@@ -126,12 +101,59 @@ class VideoNode {
     connectOutput(videoOutput) {
         this.output = videoOutput;
         this.output.connectInput(this);
-        return this;
+        return videoOutput;
     }
 
     disconnectOutput() {
         this.output.disconnectInput();
         this.output = undefined;
         return this;
+    }
+
+    read() {
+        return this.input.read(); // By default, read the previous node
+    }
+}
+
+export class CanvasVideoOutput extends VideoNode {
+    name = 'CanvasVideoOutput';
+    canvasElement;
+    options;
+
+    constructor(element, options = {}) {
+        super();
+        this.canvasElement = element;
+        this.options = {
+            frameRate: options.frameRate ?? 24,
+        };
+    }
+
+    display() {
+        const ctx = this.canvasElement.getContext('2d');
+
+        const loop = () => {
+            const imageData = this.input.read();
+            ctx.putImageData(imageData, 0, 0);
+        };
+
+        setInterval(loop, 1000 / this.options.frameRate);
+    }
+}
+
+export class VideoFilter extends VideoNode {
+    name = 'VideoFilter';
+    options;
+
+    constructor(options = {}) {
+        super();
+        this.options = {
+            callback: options.callback,
+        };
+    }
+
+    read() {
+        const imageData = this.input.read();
+        console.log(imageData);
+        return imageData;
     }
 }
