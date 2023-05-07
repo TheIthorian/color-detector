@@ -1,5 +1,4 @@
 import { App } from './src/app.js';
-import { AppError } from './src/error.js';
 import { Logger } from './src/log.js';
 
 window.addEventListener('load', main);
