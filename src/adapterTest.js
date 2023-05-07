@@ -1,4 +1,4 @@
-import { CanvasVideoOutput, VideoAdapter } from './video.js';
+import { CanvasVideoOutput, VideoAdapter, VideoFilter } from './video.js';
 
 window.addEventListener('load', test);
 
@@ -17,6 +17,9 @@ async function test() {
         yResolution: 500,
     });
     const videoOutput = new CanvasVideoOutput(outputCanvasElement, { frameRate: 1 });
-    videoAdapter.connectInput(videoStream).connectOutput(videoOutput);
+    const videoFilter = new VideoFilter();
+    videoAdapter.connectInput(videoStream);
+    videoAdapter.connectOutput(videoFilter).connectOutput(videoOutput);
+    console.log(videoAdapter.getVideoGraph());
     videoOutput.display();
 }
