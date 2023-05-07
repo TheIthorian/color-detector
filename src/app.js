@@ -13,11 +13,14 @@ export class App {
     constructor(logger) {
         this.logger = logger;
 
-        const deviceAvailable =
+        const isDeviceAvailable =
             'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
 
-        if (!deviceAvailable) {
-            throw Error('Browser does not support media devices');
+        if (!isDeviceAvailable) {
+            throw new AppError(
+                'MEDIA_NOT_SUPPORTED',
+                'Unable to load camera because your browser does not support media devices.'
+            );
         }
     }
 
