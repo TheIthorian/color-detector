@@ -148,7 +148,7 @@ export class VideoFilter extends VideoNode {
 
     constructor(options = {}) {
         super();
-        this.filterFunction = this.options.filterFunction;
+        this._filterFunction = options.filterFunction;
         this.options = {};
     }
 
