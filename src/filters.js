@@ -54,6 +54,36 @@ export function mirrorFilter() {
     return videoFilter;
 }
 
+export function greenScreen(
+    thresholds = {
+        green: 180,
+        blue: 200,
+        red: 200,
+    }
+) {
+    const videoFilter = new VideoFilter();
+    const iterator = new PixelIterator();
+
+    videoFilter.setFilterFunction(imageData => {
+        iterator.setPixelArray(imageData.data);
+
+        while (iterator.hasNext()) {
+            if (
+                iterator.g > thresholds.green &&
+                iterator.b < thresholds.blue &&
+                iterator.r < thresholds.red
+            ) {
+                // iterator.a = 0;
+                iterator.r = 255;
+                iterator.setRGBA(255, 0, 0, 255);
+            }
+            iterator.next();
+        }
+    });
+
+    return videoFilter;
+}
+
 export class FrameRateCounter {
     last = 0;
     curr = 0;
