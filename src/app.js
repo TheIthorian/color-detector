@@ -1,10 +1,14 @@
 import { rgbToHex } from './colors.js';
+import { AppError } from './error.js';
 
 export class App {
     logger;
     appContainerElement;
     canvasElement;
     outputElement;
+
+    videoStream;
+    video;
 
     get targetColor() {
         return this.outputElement.style.backgroundColor;
@@ -34,9 +38,9 @@ export class App {
 
     createCanvasElement() {
         const canvas = document.createElement('canvas');
-        canvas.setAttribute('height', 11);
-        canvas.setAttribute('width', 11);
-        canvas.style.display = 'none';
+        canvas.setAttribute('height', 110);
+        canvas.setAttribute('width', 110);
+        // canvas.style.display = 'none';
         this.appContainerElement.appendChild(canvas);
 
         this.canvasElement = canvas;
@@ -65,30 +69,39 @@ export class App {
     }
 
     async run() {
-        let videoStream;
         try {
-            videoStream = await navigator.mediaDevices.getUserMedia({
-                audio: false,
-                video: { facingMode: 'environment' },
-            });
-
-            this.video.srcObject = videoStream;
-
-            await this.getColorCode(videoStream);
+            const videoStream = await this.getVideoStream();
+            this.connectVideoToStream(videoStream);
+            await this.printColorCode();
         } catch (error) {
-            videoStream?.getTracks().forEach(track => track.stop());
-            // throw new Error('Unable to access camera');
-            throw error;
+            await this.disconnectVideoStream();
+            throw AppError.unknown(error);
         }
     }
 
-    async getColorCode(videoStream) {
+    async getVideoStream() {
+        return navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: { facingMode: 'environment' },
+        });
+    }
+
+    async disconnectVideoStream() {
+        this.videoStream?.getTracks().forEach(track => track.stop());
+    }
+
+    connectVideoToStream(videoStream) {
+        this.videoStream = videoStream;
+        this.video.srcObject = videoStream;
+    }
+
+    async printColorCode() {
         const ctx = this.canvasElement.getContext('2d');
 
         const loop = () => {
-            ctx.drawImage(this.video, 0, 0, 11, 11);
+            ctx.drawImage(this.video, 0, 0, 110, 110);
 
-            const [x, y, width, height] = [5, 5, 11, 11];
+            const [x, y, width, height] = [5, 5, 11, 11]; // TODO: should be 0, 0, 11, 11
             const imageData = ctx.getImageData(x, y, width, height);
 
             const pixels = imageData.data;
@@ -103,6 +116,6 @@ export class App {
             this.outputElement.style.backgroundColor = rgbToHex(r, g, b);
         };
 
-        setInterval(loop, 40);
+        setInterval(loop, 400);
     }
 }
