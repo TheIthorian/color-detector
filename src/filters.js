@@ -73,10 +73,42 @@ export function greenScreen(
                 iterator.b < thresholds.blue &&
                 iterator.r < thresholds.red
             ) {
-                // iterator.a = 0;
-                iterator.r = 255;
                 iterator.setRGBA(255, 0, 0, 255);
             }
+            iterator.next();
+        }
+    });
+
+    return videoFilter;
+}
+
+export function sobelFilter() {
+    const videoFilter = new VideoFilter();
+    const iterator = new PixelIterator();
+
+    videoFilter.setFilterFunction(imageData => {
+        iterator.setPixelArray(imageData.data);
+
+        while (iterator.hasNext()) {
+            const sobelFactor = calculateSobelFactor();
+            iterator.next();
+        }
+    });
+
+    return videoFilter;
+}
+
+export function grayScale() {
+    const videoFilter = new VideoFilter();
+    const iterator = new PixelIterator();
+
+    videoFilter.setFilterFunction(imageData => {
+        iterator.setPixelArray(imageData.data);
+
+        while (iterator.hasNext()) {
+            const grayScaleFactor = 0.3 * iterator.r + 0.59 * iterator.g + 0.11 * iterator.b;
+            // const gray = 0.2126 * iterator.r + 0.7152 * iterator.g + 0.0722 * iterator.b;
+            iterator.setRGBA(grayScaleFactor, grayScaleFactor, grayScaleFactor, iterator.a);
             iterator.next();
         }
     });
