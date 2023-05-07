@@ -144,16 +144,26 @@ export class VideoFilter extends VideoNode {
     name = 'VideoFilter';
     options;
 
+    _filterFunction;
+
     constructor(options = {}) {
         super();
-        this.options = {
-            callback: options.callback,
-        };
+        this.filterFunction = this.options.filterFunction;
+        this.options = {};
     }
 
     read() {
         const imageData = this.input.read();
-        console.log(imageData);
+
+        if (this._filterFunction) {
+            this._filterFunction(imageData);
+            return imageData;
+        }
+
         return imageData;
+    }
+
+    setFilterFunction(fn) {
+        this._filterFunction = fn;
     }
 }
