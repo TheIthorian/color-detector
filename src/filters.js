@@ -3,8 +3,7 @@ import { VideoFilter } from './video.js';
 export function invertFilter(logger) {
     const videoFilter = new VideoFilter();
     const iterator = new PixelIterator();
-
-    const frameCounter = new FrameRateCounter(logger);
+    // const frameCounter = new FrameRateCounter(logger);
 
     videoFilter.setFilterFunction(imageData => {
         iterator.setPixelArray(imageData.data);
@@ -14,7 +13,42 @@ export function invertFilter(logger) {
             iterator.b = 255 - iterator.b;
             iterator.next();
         }
-        frameCounter.log();
+        // frameCounter.log();
+    });
+
+    return videoFilter;
+}
+
+export function mirrorFilter() {
+    const videoFilter = new VideoFilter();
+    const iterator = new PixelIterator();
+
+    let newPixelList;
+    const newPixelListIterator = new PixelIterator();
+
+    function transform(index, width) {
+        const rowIndex = Math.floor(index / width);
+        const colIndex = index % width;
+        const transformedIndex = (rowIndex + 1) * width - colIndex - 1;
+        return transformedIndex;
+    }
+
+    videoFilter.setFilterFunction(imageData => {
+        iterator.setPixelArray(imageData.data);
+
+        if (!newPixelList) {
+            newPixelList = new Uint8ClampedArray(imageData.data.length);
+            newPixelListIterator.setPixelArray(newPixelList);
+        }
+
+        // Iterate over the original array and set the new array elements
+        while (iterator.hasNext()) {
+            newPixelListIterator.pixelIndex = transform(iterator.pixelIndex, imageData.width);
+            newPixelListIterator.setRGBA(iterator.r, iterator.g, iterator.b, iterator.a);
+            iterator.next();
+        }
+
+        iterator.setFromPixelArray(newPixelList);
     });
 
     return videoFilter;
@@ -92,6 +126,27 @@ export class PixelIterator {
         this.pixelArray[this.pos + 3] = val;
     }
 
+    get pixelIndex() {
+        return this.pos / 4;
+    }
+
+    set pixelIndex(val) {
+        this.pos = val * 4;
+    }
+
+    setRGBA(r, g, b, a) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
+
+    setFromPixelArray(pixelArray) {
+        for (let i = 0; i < this.pixelArray.length; i++) {
+            this.pixelArray[i] = pixelArray[i];
+        }
+    }
+
     next() {
         this.pos += 4;
     }
@@ -101,6 +156,6 @@ export class PixelIterator {
     }
 
     log() {
-        console.log({ pos: iterator.pos, rgb: [iterator.r, iterator.g, iterator.b] });
+        console.log({ pos: this.pos, rgb: [this.r, this.g, this.b, this.a] });
     }
 }
