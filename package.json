@@ -5,7 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "nodemon \"http-server .\"",
-        "test": "test:unit"
+        "test": "test:unit",
+        "docs": "jsdoc . -d docs"
     },
     "keywords": [
         "camera",
@@ -14,6 +15,7 @@
     "author": "TheIthorian",
     "license": "ISC",
     "devDependencies": {
+        "jsdoc": "^4.0.2",
         "prettier": "^2.8.8"
     }
 }
