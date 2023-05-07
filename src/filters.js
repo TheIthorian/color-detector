@@ -1,19 +1,6 @@
 import { VideoFilter } from './video.js';
 
-export function invertFilter() {
-    const videoFilter = new VideoFilter();
-    videoFilter.setFilterFunction(imageData => {
-        const pixels = imageData.data;
-        for (let i = 0; i < pixels.length; i++) {
-            const pixelVal = pixels[i];
-            pixels[i] = (i + 1) % 4 === 0 ? pixelVal : 255 - pixelVal;
-        }
-    });
-
-    return videoFilter;
-}
-
-export function mirrorY(logger) {
+export function invertFilter(logger) {
     const videoFilter = new VideoFilter();
     const iterator = new PixelIterator();
 
@@ -33,7 +20,7 @@ export function mirrorY(logger) {
     return videoFilter;
 }
 
-class FrameRateCounter {
+export class FrameRateCounter {
     last = 0;
     curr = 0;
     poll = 1;
@@ -60,7 +47,7 @@ class FrameRateCounter {
     }
 }
 
-class PixelIterator {
+export class PixelIterator {
     pos = 0;
     pixelArray;
 
