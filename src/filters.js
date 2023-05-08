@@ -87,6 +87,10 @@ export function sobelFilter() {
     const iterator = new PixelIterator();
     const sobelIterator = new PixelIterator();
 
+    const VERTICAL_SOBEL_MATRIX = [1, 0, -1, 2, 0, -2, 1, 0, -1];
+    const HORIZONTAL_SOBEL_MATRIX = [1, 2, 1, 0, 0, 0, -1, -2, -1];
+
+    let newPixelListIterator;
     let newPixelList; // rename
 
     videoFilter.setFilterFunction(imageData => {
@@ -95,19 +99,37 @@ export function sobelFilter() {
 
         if (!newPixelList) {
             newPixelList = new Uint8ClampedArray(imageData.data.length);
+            newPixelListIterator = new PixelIterator(newPixelList);
         }
 
         while (iterator.hasNext()) {
-            const sobelFactor = calculateSobelFactor(
+            const sobelFactorY = calculateSobelFactor(
                 iterator.pixelIndex,
                 imageData.height,
                 imageData.width,
-                sobelIterator
+                sobelIterator,
+                VERTICAL_SOBEL_MATRIX
             );
-            newPixelList[iterator.pos] = iterator.r * sobelFactor;
-            newPixelList[iterator.pos + 1] = iterator.g * sobelFactor;
-            newPixelList[iterator.pos + 2] = iterator.b * sobelFactor;
-            newPixelList[iterator.pos + 3] = iterator.a;
+
+            const sobelFactorX = calculateSobelFactor(
+                iterator.pixelIndex,
+                imageData.height,
+                imageData.width,
+                sobelIterator,
+                HORIZONTAL_SOBEL_MATRIX
+            );
+
+            const sobelFactor = (Math.abs(sobelFactorY) + Math.abs(sobelFactorX)) / 2;
+            // const sobelFactor = Math.abs(sobelFactorY) + Math.abs(sobelFactorY);
+            // const sobelFactor = Math.abs(sobelFactorY);
+
+            newPixelListIterator.pos = iterator.pos;
+            newPixelListIterator.setRGBA(
+                iterator.r * sobelFactor,
+                iterator.g * sobelFactor,
+                iterator.b * sobelFactor,
+                iterator.a
+            );
             iterator.next();
         }
 
@@ -117,7 +139,7 @@ export function sobelFilter() {
     return videoFilter;
 }
 
-export function calculateSobelFactor(index, height, width, pixelIterator) {
+export function calculateSobelFactor(index, height, width, pixelIterator, convolutionMatrix) {
     const ADJACENT_DIRECTIONS = [
         [-1, -1],
         [0, -1],
@@ -130,8 +152,6 @@ export function calculateSobelFactor(index, height, width, pixelIterator) {
         [1, 1],
     ];
 
-    const SOBEL_MATRIX = [1, 0, -1, 2, 0, -2, 1, 0, -1];
-
     function rowColToIndex(row, col, width) {
         return row * width + col;
     }
@@ -142,7 +162,7 @@ export function calculateSobelFactor(index, height, width, pixelIterator) {
     let sobelSum = 0;
     for (let i = 0; i < ADJACENT_DIRECTIONS.length; i++) {
         const direction = ADJACENT_DIRECTIONS[i];
-        const sobelFactor = SOBEL_MATRIX[i];
+        const sobelFactor = convolutionMatrix[i];
         if (!sobelFactor) continue;
 
         let newColIndex = colIndex + direction[0];
@@ -172,6 +192,25 @@ export function grayScale() {
             const grayScaleFactor = 0.3 * iterator.r + 0.59 * iterator.g + 0.11 * iterator.b;
             // const gray = 0.2126 * iterator.r + 0.7152 * iterator.g + 0.0722 * iterator.b;
             iterator.setRGBA(grayScaleFactor, grayScaleFactor, grayScaleFactor, iterator.a);
+            iterator.next();
+        }
+    });
+
+    return videoFilter;
+}
+
+export function blackAndWhiteFilter(threshold = 110) {
+    const videoFilter = new VideoFilter();
+    const iterator = new PixelIterator();
+
+    videoFilter.setFilterFunction(imageData => {
+        iterator.setPixelArray(imageData.data);
+
+        while (iterator.hasNext()) {
+            const grayScaleFactor = 0.3 * iterator.r + 0.59 * iterator.g + 0.11 * iterator.b;
+            const intensity = grayScaleFactor > threshold ? 255 : 0;
+            // const gray = 0.2126 * iterator.r + 0.7152 * iterator.g + 0.0722 * iterator.b;
+            iterator.setRGBA(intensity, intensity, intensity, iterator.a);
             iterator.next();
         }
     });
