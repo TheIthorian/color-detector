@@ -40,7 +40,7 @@ export class App {
         const canvas = document.createElement('canvas');
         canvas.setAttribute('height', 110);
         canvas.setAttribute('width', 110);
-        // canvas.style.display = 'none';
+        canvas.style.display = 'none';
         this.appContainerElement.appendChild(canvas);
 
         this.canvasElement = canvas;
