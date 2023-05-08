@@ -5,16 +5,28 @@
     "type": "module",
     "scripts": {
         "dev": "nodemon \"http-server .\"",
-        "test": "test:unit",
+        "test": "node --experimental-vm-modules ./node_modules/.bin/jest",
         "docs": "jsdoc . -d docs"
     },
     "keywords": [
         "camera",
         "color"
     ],
+    "jest": {
+        "testEnvironment": "jsdom",
+        "transform": {
+            "^.+\\.js?$": "babel-jest"
+        }
+    },
     "author": "TheIthorian",
     "license": "ISC",
     "devDependencies": {
+        "@babel/core": "^7.21.8",
+        "@babel/plugin-transform-modules-commonjs": "^7.21.5",
+        "@babel/preset-env": "^7.21.5",
+        "babel-jest": "^29.5.0",
+        "jest": "^29.5.0",
+        "jest-environment-jsdom": "^29.5.0",
         "jsdoc": "^4.0.2",
         "prettier": "^2.8.8"
     }
