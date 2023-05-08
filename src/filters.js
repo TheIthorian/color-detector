@@ -87,9 +87,15 @@ export function sobelFilter() {
     const iterator = new PixelIterator();
     const sobelIterator = new PixelIterator();
 
+    let newPixelList; // rename
+
     videoFilter.setFilterFunction(imageData => {
         iterator.setPixelArray(imageData.data);
         sobelIterator.setPixelArray(imageData.data);
+
+        if (!newPixelList) {
+            newPixelList = new Uint8ClampedArray(imageData.data.length);
+        }
 
         while (iterator.hasNext()) {
             const sobelFactor = calculateSobelFactor(
@@ -98,14 +104,14 @@ export function sobelFilter() {
                 imageData.width,
                 sobelIterator
             );
-            iterator.setRGBA(
-                iterator.r * sobelFactor,
-                iterator.g * sobelFactor,
-                iterator.b * sobelFactor,
-                iterator.a
-            );
+            newPixelList[iterator.pos] = iterator.r * sobelFactor;
+            newPixelList[iterator.pos + 1] = iterator.g * sobelFactor;
+            newPixelList[iterator.pos + 2] = iterator.b * sobelFactor;
+            newPixelList[iterator.pos + 3] = iterator.a;
             iterator.next();
         }
+
+        iterator.setFromPixelArray(newPixelList);
     });
 
     return videoFilter;
@@ -113,15 +119,15 @@ export function sobelFilter() {
 
 export function calculateSobelFactor(index, height, width, pixelIterator) {
     const ADJACENT_DIRECTIONS = [
-        [-1, 1],
-        [0, 1],
-        [1, 1],
-        [-1, 0],
-        [0, 0],
-        [1, 0],
         [-1, -1],
         [0, -1],
         [1, -1],
+        [-1, 0],
+        [0, 0],
+        [1, 0],
+        [-1, 1],
+        [0, 1],
+        [1, 1],
     ];
 
     const SOBEL_MATRIX = [1, 0, -1, 2, 0, -2, 1, 0, -1];
@@ -137,14 +143,19 @@ export function calculateSobelFactor(index, height, width, pixelIterator) {
     for (let i = 0; i < ADJACENT_DIRECTIONS.length; i++) {
         const direction = ADJACENT_DIRECTIONS[i];
         const sobelFactor = SOBEL_MATRIX[i];
+        if (!sobelFactor) continue;
+
         let newColIndex = colIndex + direction[0];
         let newRowIndex = rowIndex + direction[1];
 
-        newColIndex = newColIndex < 0 ? colIndex : newColIndex > width ? colIndex : newColIndex;
-        newRowIndex = newRowIndex < 0 ? rowIndex : newRowIndex > height ? rowIndex : newRowIndex;
+        newColIndex = newColIndex < 0 ? colIndex : newColIndex > width - 1 ? colIndex : newColIndex;
+        newRowIndex =
+            newRowIndex < 0 ? rowIndex : newRowIndex > height - 1 ? rowIndex : newRowIndex;
 
         pixelIterator.pixelIndex = rowColToIndex(newRowIndex, newColIndex, width);
-        sobelSum = (sobelFactor * (pixelIterator.r + pixelIterator.g + pixelIterator.b)) / 3;
+        const factorToAdd =
+            (sobelFactor * (pixelIterator.r + pixelIterator.g + pixelIterator.b)) / 3;
+        sobelSum += factorToAdd;
     }
 
     return sobelSum;
