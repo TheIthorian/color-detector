@@ -85,17 +85,69 @@ export function greenScreen(
 export function sobelFilter() {
     const videoFilter = new VideoFilter();
     const iterator = new PixelIterator();
+    const sobelIterator = new PixelIterator();
 
     videoFilter.setFilterFunction(imageData => {
         iterator.setPixelArray(imageData.data);
+        sobelIterator.setPixelArray(imageData.data);
 
         while (iterator.hasNext()) {
-            const sobelFactor = calculateSobelFactor();
+            const sobelFactor = calculateSobelFactor(
+                iterator.pixelIndex,
+                imageData.height,
+                imageData.width,
+                sobelIterator
+            );
+            iterator.setRGBA(
+                iterator.r * sobelFactor,
+                iterator.g * sobelFactor,
+                iterator.b * sobelFactor,
+                iterator.a
+            );
             iterator.next();
         }
     });
 
     return videoFilter;
+}
+
+export function calculateSobelFactor(index, height, width, pixelIterator) {
+    const ADJACENT_DIRECTIONS = [
+        [-1, 1],
+        [0, 1],
+        [1, 1],
+        [-1, 0],
+        [0, 0],
+        [1, 0],
+        [-1, -1],
+        [0, -1],
+        [1, -1],
+    ];
+
+    const SOBEL_MATRIX = [1, 0, -1, 2, 0, -2, 1, 0, -1];
+
+    function rowColToIndex(row, col, width) {
+        return row * width + col;
+    }
+
+    const rowIndex = Math.floor(index / width);
+    const colIndex = index % width;
+
+    let sobelSum = 0;
+    for (let i = 0; i < ADJACENT_DIRECTIONS.length; i++) {
+        const direction = ADJACENT_DIRECTIONS[i];
+        const sobelFactor = SOBEL_MATRIX[i];
+        let newColIndex = colIndex + direction[0];
+        let newRowIndex = rowIndex + direction[1];
+
+        newColIndex = newColIndex < 0 ? colIndex : newColIndex > width ? colIndex : newColIndex;
+        newRowIndex = newRowIndex < 0 ? rowIndex : newRowIndex > height ? rowIndex : newRowIndex;
+
+        pixelIterator.pixelIndex = rowColToIndex(newRowIndex, newColIndex, width);
+        sobelSum = (sobelFactor * (pixelIterator.r + pixelIterator.g + pixelIterator.b)) / 3;
+    }
+
+    return sobelSum;
 }
 
 export function grayScale() {
