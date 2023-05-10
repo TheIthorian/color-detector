@@ -6,11 +6,10 @@ window.addEventListener('load', run);
 
 async function run() {
     const outputCanvasElement = document.querySelector('#output');
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
+    const windowWidth = Math.min(window.innerWidth, window.innerHeight);
 
     outputCanvasElement.setAttribute('width', windowWidth + 'px');
-    outputCanvasElement.setAttribute('height', windowHeight + 'px');
+    outputCanvasElement.setAttribute('height', windowWidth + 'px');
 
     const videoStream = await navigator.mediaDevices.getUserMedia({
         audio: false,
@@ -19,14 +18,15 @@ async function run() {
 
     const videoAdapter = new VideoAdapter({
         xResolution: windowWidth,
-        yResolution: windowHeight,
+        yResolution: windowWidth,
     });
 
     window.addEventListener('resize', () => {
-        outputCanvasElement.setAttribute('width', window.innerWidth + 'px');
-        outputCanvasElement.setAttribute('height', window.innerHeight + 'px');
-        videoAdapter.xResolution = window.innerWidth;
-        videoAdapter.yResolution = window.innerHeight;
+        const resizeWindowWidth = Math.min(window.innerWidth, window.innerHeight);
+        outputCanvasElement.setAttribute('width', resizeWindowWidth + 'px');
+        outputCanvasElement.setAttribute('height', resizeWindowWidth + 'px');
+        videoAdapter.xResolution = resizeWindowWidth;
+        videoAdapter.yResolution = resizeWindowWidth;
     });
 
     const videoOutput = new CanvasVideoOutput(outputCanvasElement, { frameRate: 24 });

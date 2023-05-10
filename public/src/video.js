@@ -19,12 +19,14 @@ export class VideoAdapter {
     }
 
     set xResolution(val) {
-        canvas.setAttribute('width', val);
+        this.canvasElement.setAttribute('width', val);
+        this._videoElement.setAttribute('width', val);
         this.options.xResolution = val;
     }
 
     set yResolution(val) {
-        canvas.setAttribute('height', val);
+        this.canvasElement.setAttribute('height', val);
+        this._videoElement.setAttribute('height', val);
         this.options.yResolution = val;
     }
 
@@ -34,6 +36,7 @@ export class VideoAdapter {
         canvas.setAttribute('width', this.options.yResolution);
         canvas.style.display = 'none';
         document.body.appendChild(canvas);
+        this.captureCanvas = canvas;
         return canvas;
     }
 
