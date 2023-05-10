@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="index.css" />
+<script src="src/adapterTest.js" type="module"></script>
+
+<body>
+    <div class="layout">
+        <button onclick="document.querySelector('nav').classList.toggle('open')">Toggle</button>
+        <nav id="nav">
+            <div id="filter-app-nav" class="nav-item">
+                <a href="/filter-app">Filter App</a>
+            </div>
+        </nav>
+        <div id="app-container">
+            <div id="errors"></div>
+            <div id="log-output" style="font-size: xx-large"></div>
+            <div id="app"></div>
+            <canvas id="output"></canvas>
+        </div>
+    </div>
+</body>
