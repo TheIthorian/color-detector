@@ -2,26 +2,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="index.css" />
 <script src="index.js" type="module"></script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+</style>
+
+<script>
+    window.addEventListener('load', () => {});
+</script>
 
 <body>
     <div id="title-bar">
         <button
             style="z-index: 100; margin-right: 2rem"
             onclick="document.querySelector('nav').classList.toggle('open')"
-            >Toggle</button
+            >Menu</button
         >
-        Title</div
+        Color Detector</div
     >
     <div class="layout">
         <div id="app-container">
             <div id="errors"></div>
             <div id="log-output" style="font-size: xx-large"></div>
-            <div id="app"></div>
+            <div id="app" style="height: 100%"></div>
         </div>
         <div id="nav-container">
-            <nav id="nav">
+            <nav id="nav" style="">
+                <div id="filter-app-nav" class="nav-item highlight">
+                    <a href="/">Color Detector</a>
+                </div>
                 <div id="filter-app-nav" class="nav-item">
-                    <a href="/filter-app">Filter App</a>
+                    <a href="/filter-app">Filters</a>
                 </div>
             </nav>
         </div>

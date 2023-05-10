@@ -4,18 +4,30 @@
 <script src="src/adapterTest.js" type="module"></script>
 
 <body>
+    <div id="title-bar">
+        <button
+            style="z-index: 100; margin-right: 2rem"
+            onclick="document.querySelector('nav').classList.toggle('open')"
+            >Menu</button
+        >
+        Color Detector</div
+    >
     <div class="layout">
-        <button onclick="document.querySelector('nav').classList.toggle('open')">Toggle</button>
-        <nav id="nav">
-            <div id="filter-app-nav" class="nav-item">
-                <a href="/filter-app">Filter App</a>
-            </div>
-        </nav>
         <div id="app-container">
             <div id="errors"></div>
             <div id="log-output" style="font-size: xx-large"></div>
             <div id="app"></div>
             <canvas id="output"></canvas>
+        </div>
+        <div id="nav-container">
+            <nav id="nav">
+                <div id="filter-app-nav" class="nav-item">
+                    <a href="/">Color Detector</a>
+                </div>
+                <div id="filter-app-nav" class="nav-item highlight">
+                    <a href="/filter-app">Filters</a>
+                </div>
+            </nav>
         </div>
     </div>
 </body>
