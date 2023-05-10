@@ -103,16 +103,12 @@ export class App {
 
             const [x, y, width, height] = [0, 0, 110, 110];
             const pixels = ctx.getImageData(x, y, width, height).data;
-            console.log(pixels);
             const iterator = new PixelIterator(pixels);
-            console.log(pixels.length);
             iterator.pixelIndex = pixels.length / 8 + width / 2;
 
             const r = iterator.r;
             const g = iterator.g;
             const b = iterator.b;
-
-            console.log({ r, g, b });
 
             const hexColorString = rgbToHex(r, g, b);
             const logMessage = `rgb(${[r, g, b].join(', ')})\n hex: ${hexColorString}`;
