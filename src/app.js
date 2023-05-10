@@ -1,5 +1,6 @@
 import { rgbToHex } from './colors.js';
 import { AppError } from './error.js';
+import { PixelIterator } from './filters.js';
 
 export class App {
     logger;
@@ -61,7 +62,7 @@ export class App {
     createOutputElement() {
         const outputElement = document.createElement('div');
         outputElement.style.width = '100%';
-        outputElement.style.height = '300px';
+        outputElement.style.height = '200px';
         outputElement.style.backgroundColor = '#FFFFFF';
         this.appContainerElement.appendChild(outputElement);
 
@@ -97,20 +98,24 @@ export class App {
 
     async printColorCode() {
         const ctx = this.canvasElement.getContext('2d');
-
         const loop = () => {
             ctx.drawImage(this.video, 0, 0, 110, 110);
 
-            const [x, y, width, height] = [5, 5, 11, 11]; // TODO: should be 0, 0, 11, 11
-            const imageData = ctx.getImageData(x, y, width, height);
+            const [x, y, width, height] = [0, 0, 110, 110];
+            const pixels = ctx.getImageData(x, y, width, height).data;
+            console.log(pixels);
+            const iterator = new PixelIterator(pixels);
+            console.log(pixels.length);
+            iterator.pixelIndex = pixels.length / 8 + width / 2;
 
-            const pixels = imageData.data;
-            // const centerPixelPosition = 11 * 4 * 6;
-            const firstPixelPosition = 0;
-            const [r, g, b, a] = pixels.slice(firstPixelPosition, firstPixelPosition + 5);
+            const r = iterator.r;
+            const g = iterator.g;
+            const b = iterator.b;
+
+            console.log({ r, g, b });
 
             const hexColorString = rgbToHex(r, g, b);
-            const logMessage = `rgb(${[r, g, b].join(', ')}), hex: ${hexColorString}`;
+            const logMessage = `rgb(${[r, g, b].join(', ')})\n hex: ${hexColorString}`;
             this.logger.log(logMessage, true);
 
             this.outputElement.style.backgroundColor = rgbToHex(r, g, b);
