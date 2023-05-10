@@ -6,8 +6,11 @@ window.addEventListener('load', run);
 
 async function run() {
     const outputCanvasElement = document.querySelector('#output');
-    outputCanvasElement.setAttribute('width', 700);
-    outputCanvasElement.setAttribute('height', 700);
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    outputCanvasElement.setAttribute('width', windowWidth + 'px');
+    outputCanvasElement.setAttribute('height', windowHeight + 'px');
 
     const videoStream = await navigator.mediaDevices.getUserMedia({
         audio: false,
@@ -15,9 +18,17 @@ async function run() {
     });
 
     const videoAdapter = new VideoAdapter({
-        xResolution: 700,
-        yResolution: 700,
+        xResolution: windowWidth,
+        yResolution: windowHeight,
     });
+
+    window.addEventListener('resize', () => {
+        outputCanvasElement.setAttribute('width', window.innerWidth + 'px');
+        outputCanvasElement.setAttribute('height', window.innerHeight + 'px');
+        videoAdapter.xResolution = window.innerWidth;
+        videoAdapter.yResolution = window.innerHeight;
+    });
+
     const videoOutput = new CanvasVideoOutput(outputCanvasElement, { frameRate: 24 });
 
     const logger = new Logger(document.getElementById('log-output'));

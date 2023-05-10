@@ -18,6 +18,16 @@ export class VideoAdapter {
         this._videoElement = this.createVideoElement();
     }
 
+    set xResolution(val) {
+        canvas.setAttribute('width', val);
+        this.options.xResolution = val;
+    }
+
+    set yResolution(val) {
+        canvas.setAttribute('height', val);
+        this.options.yResolution = val;
+    }
+
     createCanvasElement() {
         const canvas = document.createElement('canvas');
         canvas.setAttribute('height', this.options.xResolution);
