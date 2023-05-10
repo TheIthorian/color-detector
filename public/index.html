@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="index.css" />
-<script src="src/adapterTest.js" type="module"></script>
+<script src="index.js" type="module"></script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+</style>
+
+<script>
+    window.addEventListener('load', () => {});
+</script>
 
 <body>
     <div id="title-bar">
@@ -16,16 +23,15 @@
         <div id="app-container">
             <div id="errors"></div>
             <div id="log-output" style="font-size: xx-large"></div>
-            <div id="app"></div>
-            <canvas id="output"></canvas>
+            <div id="app" style="height: 100%"></div>
         </div>
         <div id="nav-container">
-            <nav id="nav">
-                <div id="filter-app-nav" class="nav-item">
+            <nav id="nav" style="">
+                <div id="filter-app-nav" class="nav-item highlight">
                     <a href="/">Color Detector</a>
                 </div>
-                <div id="filter-app-nav" class="nav-item highlight">
-                    <a href="/filter-app">Filters</a>
+                <div id="filter-app-nav" class="nav-item">
+                    <a href="./filter-app.html">Filters</a>
                 </div>
             </nav>
         </div>

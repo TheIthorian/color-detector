@@ -5,6 +5,7 @@ import {
     mirrorFilter,
     sobelFilter,
 } from './filters.js';
+import { Logger } from './log.js';
 import { CanvasVideoOutput, VideoAdapter, VideoFilter } from './video.js';
 
 window.addEventListener('load', test);
