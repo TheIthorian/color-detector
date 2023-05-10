@@ -113,6 +113,16 @@ class VideoNode {
     read() {
         return this.input.read(); // By default, read the previous node
     }
+
+    getVideoGraph() {
+        const graph = [];
+        let curr = this;
+        while (curr) {
+            graph.push(curr);
+            curr = curr.output;
+        }
+        return graph;
+    }
 }
 
 export class CanvasVideoOutput extends VideoNode {
