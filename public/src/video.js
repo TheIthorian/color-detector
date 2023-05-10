@@ -55,7 +55,7 @@ export class VideoAdapter {
     }
 
     disconnectOutput() {
-        this.output.disconnectInput();
+        this.output?.disconnectInput();
         this.output = undefined;
         return this;
     }
@@ -105,7 +105,7 @@ class VideoNode {
     }
 
     disconnectOutput() {
-        this.output.disconnectInput();
+        this.output?.disconnectInput();
         this.output = undefined;
         return this;
     }
@@ -140,6 +140,8 @@ export class CanvasVideoOutput extends VideoNode {
 
     display() {
         const ctx = this.canvasElement.getContext('2d');
+
+        if (!this.input) return;
 
         const loop = () => {
             const imageData = this.input.read();
