@@ -6,7 +6,7 @@ window.addEventListener('load', run);
 
 async function run() {
     const outputCanvasElement = document.querySelector('#output');
-    const windowWidth = Math.min(window.innerWidth, window.innerHeight);
+    const windowWidth = Math.min(window.innerWidth, window.innerHeight, 600);
 
     outputCanvasElement.setAttribute('width', windowWidth + 'px');
     outputCanvasElement.setAttribute('height', windowWidth + 'px');
@@ -22,7 +22,7 @@ async function run() {
     });
 
     window.addEventListener('resize', () => {
-        const resizeWindowWidth = Math.min(window.innerWidth, window.innerHeight);
+        const resizeWindowWidth = Math.min(window.innerWidth, window.innerHeight, 600);
         outputCanvasElement.setAttribute('width', resizeWindowWidth + 'px');
         outputCanvasElement.setAttribute('height', resizeWindowWidth + 'px');
         videoAdapter.xResolution = resizeWindowWidth;
@@ -54,7 +54,10 @@ async function run() {
             }
 
             // Disconnect existing filters
-            videoAdapter.getVideoGraph().forEach(node => node.disconnectOutput());
+            videoAdapter.getVideoGraph().forEach(node => {
+                node.disconnectOutput();
+                node.disabled = true;
+            });
 
             const head = FilterBuilder.fromArray(filters);
             const graph = head.getVideoGraph();

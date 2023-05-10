@@ -140,6 +140,7 @@ class VideoNode {
 
 export class CanvasVideoOutput extends VideoNode {
     name = 'CanvasVideoOutput';
+    disabled = false;
     canvasElement;
     options;
 
@@ -180,7 +181,7 @@ export class VideoFilter extends VideoNode {
     read() {
         const imageData = this.input.read();
 
-        if (this._filterFunction) {
+        if (this._filterFunction && !this.disabled) {
             this._filterFunction(imageData);
             return imageData;
         }
