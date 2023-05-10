@@ -2,6 +2,7 @@ import { VideoFilter } from './video.js';
 
 export function invertFilter(logger) {
     const videoFilter = new VideoFilter();
+    videoFilter.name = 'invertFilter';
     const iterator = new PixelIterator();
     // const frameCounter = new FrameRateCounter(logger);
 
@@ -21,6 +22,7 @@ export function invertFilter(logger) {
 
 export function mirrorFilter() {
     const videoFilter = new VideoFilter();
+    videoFilter.name = 'mirrorFilter';
     const iterator = new PixelIterator();
 
     let newPixelList;
@@ -62,6 +64,7 @@ export function greenScreen(
     }
 ) {
     const videoFilter = new VideoFilter();
+    videoFilter.name = 'greenScreen';
     const iterator = new PixelIterator();
 
     videoFilter.setFilterFunction(imageData => {
@@ -84,6 +87,7 @@ export function greenScreen(
 
 export function sobelFilter() {
     const videoFilter = new VideoFilter();
+    videoFilter.name = 'sobelFilter';
     const iterator = new PixelIterator();
     const sobelIterator = new PixelIterator();
 
@@ -183,6 +187,7 @@ export function calculateSobelFactor(index, height, width, pixelIterator, convol
 
 export function grayScale() {
     const videoFilter = new VideoFilter();
+    videoFilter.name = 'grayScale';
     const iterator = new PixelIterator();
 
     videoFilter.setFilterFunction(imageData => {
@@ -201,6 +206,7 @@ export function grayScale() {
 
 export function blackAndWhiteFilter(threshold = 110) {
     const videoFilter = new VideoFilter();
+    videoFilter.name = 'blackAndWhiteFilter';
     const iterator = new PixelIterator();
 
     videoFilter.setFilterFunction(imageData => {
