@@ -5,7 +5,7 @@ import {
     sobelFilter,
     grayScale,
     blackAndWhiteFilter,
-} from './filters';
+} from './filters.js';
 
 export class FilterBuilder {
     static FILTERS = {
