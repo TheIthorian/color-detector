@@ -1,10 +1,10 @@
 import { FilterBuilder } from './filterBuilder.js';
 import { Logger } from './log.js';
-import { CanvasVideoOutput, VideoAdapter, VideoFilter } from './video.js';
+import { CanvasVideoOutput, VideoAdapter } from './video.js';
 
-window.addEventListener('load', test);
+window.addEventListener('load', run);
 
-async function test() {
+async function run() {
     const outputCanvasElement = document.querySelector('#output');
     outputCanvasElement.setAttribute('width', 700);
     outputCanvasElement.setAttribute('height', 700);
