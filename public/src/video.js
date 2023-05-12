@@ -18,12 +18,25 @@ export class VideoAdapter {
         this._videoElement = this.createVideoElement();
     }
 
+    set xResolution(val) {
+        this.canvasElement.setAttribute('width', val);
+        this._videoElement.setAttribute('width', val);
+        this.options.xResolution = val;
+    }
+
+    set yResolution(val) {
+        this.canvasElement.setAttribute('height', val);
+        this._videoElement.setAttribute('height', val);
+        this.options.yResolution = val;
+    }
+
     createCanvasElement() {
         const canvas = document.createElement('canvas');
         canvas.setAttribute('height', this.options.xResolution);
         canvas.setAttribute('width', this.options.yResolution);
         canvas.style.display = 'none';
         document.body.appendChild(canvas);
+        this.captureCanvas = canvas;
         return canvas;
     }
 
@@ -55,7 +68,7 @@ export class VideoAdapter {
     }
 
     disconnectOutput() {
-        this.output.disconnectInput();
+        this.output?.disconnectInput();
         this.output = undefined;
         return this;
     }
@@ -105,7 +118,7 @@ class VideoNode {
     }
 
     disconnectOutput() {
-        this.output.disconnectInput();
+        this.output?.disconnectInput();
         this.output = undefined;
         return this;
     }
@@ -113,10 +126,21 @@ class VideoNode {
     read() {
         return this.input.read(); // By default, read the previous node
     }
+
+    getVideoGraph() {
+        const graph = [];
+        let curr = this;
+        while (curr) {
+            graph.push(curr);
+            curr = curr.output;
+        }
+        return graph;
+    }
 }
 
 export class CanvasVideoOutput extends VideoNode {
     name = 'CanvasVideoOutput';
+    disabled = false;
     canvasElement;
     options;
 
@@ -130,6 +154,8 @@ export class CanvasVideoOutput extends VideoNode {
 
     display() {
         const ctx = this.canvasElement.getContext('2d');
+
+        if (!this.input) return;
 
         const loop = () => {
             const imageData = this.input.read();
@@ -155,7 +181,7 @@ export class VideoFilter extends VideoNode {
     read() {
         const imageData = this.input.read();
 
-        if (this._filterFunction) {
+        if (this._filterFunction && !this.disabled) {
             this._filterFunction(imageData);
             return imageData;
         }

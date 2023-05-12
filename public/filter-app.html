@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="index.css" />
-<script src="./src/adapterTest.js" type="module"></script>
+<script src="./src/filterApp.js" type="module"></script>
 
 <body>
     <div id="title-bar">
@@ -13,7 +13,7 @@
         Color Detector</div
     >
     <div class="layout">
-        <div id="app-container">
+        <div id="app-container" style="padding: 0">
             <div id="errors"></div>
             <div id="log-output" style="font-size: xx-large"></div>
             <div id="app"></div>
@@ -26,6 +26,18 @@
                 </div>
                 <div id="filter-app-nav" class="nav-item highlight">
                     <a href="../public/filter-app">Filters</a>
+                </div>
+                <div id="options">
+                    <input type="checkbox" value="invertFilter" />
+                    <span>Invert</span><br />
+                    <input type="checkbox" value="mirrorFilter" />
+                    <span>Mirror</span><br />
+                    <input type="checkbox" value="grayScale" />
+                    <span>Gray Scale</span><br />
+                    <input type="checkbox" value="blackAndWhiteFilter" />
+                    <span>Black and White</span><br />
+                    <input type="checkbox" value="sobelFilter" />
+                    <span>Edge Detection</span><br />
                 </div>
             </nav>
         </div>
