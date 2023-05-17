@@ -34,8 +34,6 @@ export function FFT(amplitudes) {
     const halfN = N / 2;
     let even = [];
     let odd = [];
-    even.length = halfN;
-    odd.length = halfN;
 
     for (let i = 0; i < halfN; ++i) {
         even[i] = amplitudes[i * 2];
