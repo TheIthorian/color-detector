@@ -5,6 +5,7 @@ import {
     sobelFilter,
     grayScale,
     blackAndWhiteFilter,
+    fourierFilter,
 } from './filters.js';
 
 export class FilterBuilder {
@@ -15,6 +16,7 @@ export class FilterBuilder {
         sobelFilter,
         grayScale,
         blackAndWhiteFilter,
+        fourierFilter,
     };
 
     static fromArray(arr) {
