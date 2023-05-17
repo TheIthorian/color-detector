@@ -1,3 +1,4 @@
+import { FFT, normalise } from './fft/index.js';
 import { VideoFilter } from './video.js';
 
 export function invertFilter(logger) {
@@ -224,6 +225,52 @@ export function blackAndWhiteFilter(threshold = 110) {
     return videoFilter;
 }
 
+export function fourierFilter() {
+    const videoFilter = new VideoFilter();
+    videoFilter.name = 'fourierFilter';
+    const iterator = new PixelIterator();
+
+    let r, g, b;
+
+    videoFilter.setFilterFunction(imageData => {
+        iterator.setPixelArray(imageData.data);
+
+        const length = imageData.data.length / 4;
+
+        if (!r) {
+            [r, g, b] = [new Array(length), new Array(length), new Array(length)];
+        }
+
+        let i = 0;
+        while (iterator.hasNext()) {
+            r[i] = iterator.r;
+            // g[i] = iterator.g;
+            // b[i] = iterator.b;
+            i += 1;
+            iterator.next();
+        }
+
+        r = FFT(r);
+        // FFT(g);
+        // FFT(b);
+
+        iterator.pos = 0;
+        while (iterator.hasNext()) {
+            // iterator.r = r[iterator.pixelIndex];
+            // iterator.g = g[iterator.pixelIndex];
+            // iterator.b = b[iterator.pixelIndex];
+            iterator.r = normalise(r[iterator.pixelIndex]);
+            iterator.g = normalise(r[iterator.pixelIndex]);
+            iterator.b = normalise(r[iterator.pixelIndex]);
+            iterator.next();
+        }
+
+        iterator.setPixelArray;
+    });
+
+    return videoFilter;
+}
+
 export class FrameRateCounter {
     last = 0;
     curr = 0;
@@ -297,7 +344,7 @@ export class PixelIterator {
     }
 
     get pixelIndex() {
-        return this.pos / 4;
+        return this.pos / 4; // TODO: Can this be sped up?
     }
 
     set pixelIndex(val) {
